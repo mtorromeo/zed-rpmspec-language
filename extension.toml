@@ -1,0 +1,15 @@
+id = "rpmspec"
+name = "RPM Spec"
+version = "0.0.1"
+authors = ["Massimiliano Torromeo <massimiliano.torromeo@gmail.com>"]
+description = "RPM Spec language support for Zed"
+repository = "https://github.com/mtorromeo/zed-rpmspec-language"
+schema_version = 1
+
+[language_servers.rpmspec]
+name = "RPM Spec Language Server"
+language = "RPM Spec"
+
+[grammars.rpmspec]
+repository = "https://gitlab.com/cryptomilk/tree-sitter-rpmspec"
+commit = "a7b1cff462c2069b005a41848f462d79d67c738f"
