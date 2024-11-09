@@ -12,23 +12,22 @@ impl zed::Extension for RPMSpecExtension {
         _language_server_id: &zed_extension_api::LanguageServerId,
         worktree: &zed_extension_api::Worktree,
     ) -> zed_extension_api::Result<zed_extension_api::Command> {
-        let path = worktree
+        let command = worktree
             .which("rpm_lsp_server")
             .ok_or_else(|| "rpm_lsp_server must be installed manually. See https://github.com/dcermak/rpm-spec-language-server.".to_string())?;
 
-        let arguments = LspSettings::for_worktree("rpm_lsp_server", worktree)
+        let args = LspSettings::for_worktree("rpm_lsp_server", worktree)
             .map(|lsp_settings| {
                 lsp_settings
                     .binary
                     .and_then(|binary| binary.arguments)
-                    // If no arguments are provided, default to enabling the HTTP server.
                     .unwrap_or(vec!["--stdio".to_string()])
             })
             .unwrap_or_default();
 
         Ok(zed::Command {
-            command: path,
-            args: arguments,
+            command,
+            args,
             env: worktree.shell_env(),
         })
     }
@@ -56,61 +55,6 @@ impl zed::Extension for RPMSpecExtension {
             "rpm_lsp_server": settings
         })))
     }
-
-    // fn label_for_completion(
-    //     &self,
-    //     _language_server_id: &zed_extension_api::LanguageServerId,
-    //     completion: Completion,
-    // ) -> Option<zed_extension_api::CodeLabel> {
-    //     let prefix = match completion.kind? {
-    //         CompletionKind::Method | CompletionKind::Function => "def ",
-    //         CompletionKind::Constructor
-    //         | CompletionKind::Class
-    //         | CompletionKind::Interface
-    //         | CompletionKind::Module => "class ",
-    //         CompletionKind::Variable => "var ",
-    //         CompletionKind::Field
-    //         | CompletionKind::Constant
-    //         | CompletionKind::Value
-    //         | CompletionKind::Property => "val ",
-    //         CompletionKind::Enum => "enum ",
-    //         CompletionKind::Keyword => "",
-    //         _ => return None,
-    //     };
-    //     let name = completion.label;
-    //     let code = format!("{prefix}{name}");
-    //     let code_len = code.len();
-    //     Some(CodeLabel {
-    //         code,
-    //         spans: vec![CodeLabelSpan::code_range(prefix.len()..code_len)],
-    //         filter_range: (0..name.len()).into(),
-    //     })
-    // }
-
-    // fn label_for_symbol(
-    //     &self,
-    //     _language_server_id: &zed_extension_api::LanguageServerId,
-    //     symbol: Symbol,
-    // ) -> Option<CodeLabel> {
-    //     let prefix = match symbol.kind {
-    //         SymbolKind::Module
-    //         | SymbolKind::Class
-    //         | SymbolKind::Interface
-    //         | SymbolKind::Constructor => "class ",
-    //         SymbolKind::Method | SymbolKind::Function => "def ",
-    //         SymbolKind::Variable => "var ",
-    //         SymbolKind::Property | SymbolKind::Field | SymbolKind::Constant => "val ",
-    //         _ => "",
-    //     };
-    //     let name = symbol.name;
-    //     let code = format!("{prefix}{name}");
-    //     let code_len = code.len();
-    //     Some(CodeLabel {
-    //         code,
-    //         spans: vec![CodeLabelSpan::code_range(prefix.len()..code_len)],
-    //         filter_range: (0..name.len()).into(),
-    //     })
-    // }
 }
 
 zed::register_extension!(RPMSpecExtension);
